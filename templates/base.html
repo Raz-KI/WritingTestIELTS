@@ -3,18 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}IELTS Test App{% endblock %}</title>
+    <title>{% block title %}IELTS Test{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <header>
-        <h1>IELTS Test Application</h1>
-    </header>
-    <main>
+    <div id="content">
+        <div id="chatbox">
+            <div id="messages">
+                <!-- Display the first question here -->
+                <div><strong>Assistant:</strong> {{ firstquestion }}</div>
+            </div>
+            <input type="text" id="user-input" placeholder="Type your message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
         {% block content %}{% endblock %}
-    </main>
-    <footer>
-        <p>&copy; 2024 IELTS Test App</p>
-    </footer>
+    </div>
+
+    <script>
+        function sendMessage() {
+        const userMessage = document.getElementById('user-input').value;
+
+        fetch('/get_question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ message: userMessage })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const messagesDiv = document.getElementById('messages');
+            messagesDiv.innerHTML += `<div><strong>You:</strong> ${userMessage}</div>`;
+            messagesDiv.innerHTML += `<div><strong>Assistant:</strong> ${data.question}</div>`;
+            document.getElementById('user-input').value = ''; // Clear the input field
+            saveChatHistory(); // Save chat history
+        });
+    }
+
+    function submitAnswer() {
+        const userAnswer = document.getElementById('user-answer').value;
+
+        fetch('/submit_answer', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ answer: userAnswer })
+        })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById("content").innerHTML = `
+                <h2>Rating</h2>
+                <p>${data.rating}</p>
+                <a href="{{ url_for('academic') }}" class="button" data-load>Back to Academic</a>
+            `;
+            localStorage.removeItem('chatHistory'); // Clear chat history after submission
+        });
+    }
+        document.addEventListener("DOMContentLoaded", function() {
+            document.querySelectorAll("a[data-load]").forEach(link => {
+                link.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    loadPage(this.href);
+                });
+            });
+            loadChatHistory();
+        });
+
+        function loadPage(url) {
+            fetch(url)
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById("content").innerHTML = data;
+                    document.querySelectorAll("a[data-load]").forEach(link => {
+                        link.addEventListener("click", function(event) {
+                            event.preventDefault();
+                            loadPage(this.href);
+                        });
+                    });
+                    loadChatHistory();
+                });
+        }
+
+        function loadChatHistory() {
+            if (document.getElementById('chatbox')) {
+                const chatHistory = localStorage.getItem('chatHistory');
+                if (chatHistory) {
+                    document.getElementById('messages').innerHTML = chatHistory;
+                }
+            }
+        }
+
+        function saveChatHistory() {
+            const messages = document.getElementById('messages').innerHTML;
+            localStorage.setItem('chatHistory', messages);
+        }
+    </script>
 </body>
 </html>

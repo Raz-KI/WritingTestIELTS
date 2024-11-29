@@ -1,17 +1,12 @@
+
+
 {% extends 'base.html' %}
 
 {% block title %}Writing{% endblock %}
 
 {% block content %}
 <h2>Academic Writing</h2>
-<div id="chatbox">
-    <div id="messages">
-        <!-- Display the first question here -->
-        <div><strong>Assistant:</strong> {{ firstquestion }}</div>
-    </div>
-    <input type="text" id="user-input" placeholder="Type your message...">
-    <button onclick="sendMessage()">Send</button>
-</div>
+
 
 <h3>Your Answer</h3>
 <textarea id="user-answer" rows="10" cols="50"></textarea>
@@ -19,22 +14,9 @@
 <button onclick="submitAnswer()" style="display: block; margin-top: 10px;">Submit Answer</button>
 
 <script>
-    function submitAnswer() {
-        const userAnswer = document.getElementById('user-answer').value;
-
-        fetch('/submit_answer', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ answer: userAnswer })
-        })
-        .then(response => response.text())  // We expect HTML response
-        .then(data => {
-            document.body.innerHTML = data;  // Replace the page content with the rating page
-        });
-    }
+     
+    
 </script>
 
-<a href="{{ url_for('academic') }}" class="button">Back to Academic</a>
+<a href="{{ url_for('academic') }}" class="button" data-load>Back to Academic</a>
 {% endblock %}

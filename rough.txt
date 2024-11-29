@@ -1,0 +1,37 @@
+base .html prhlr ka
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IELTS Test App{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>IELTS Test Application</h1>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2024 IELTS Test App</p>
+    </footer>
+</body>
+</html>
+-------------------------------------------------------------------
+academic .html
+<!-- {% extends 'base.html' %}
+
+{% block title %}Academic Test{% endblock %}
+
+{% block content %}
+<h2>Academic IELTS Test</h2>
+<div>
+    <a class="button">Reading</a>
+    <a href="{{ url_for('writing') }}" class="button">Writing</a>
+    <a class="button">Listening</a>
+    <a class="button">Speaking</a>
+</div>
+<a href="{{ url_for('home') }}" class="button">Back to Home</a>
+{% endblock %} -->
