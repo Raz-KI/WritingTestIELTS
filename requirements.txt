@@ -1,4 +1,5 @@
 flask
 Flask 
+uvicorn
 gunicorn
 groq==0.11.0
